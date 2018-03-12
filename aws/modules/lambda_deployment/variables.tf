@@ -12,8 +12,6 @@ It's also used as part of the s3 bucket name.
 EOF
 }
 
-variable "lambda_bucket" {}
-
 variable "lambda_description" {
   default = ""
 }
@@ -32,12 +30,17 @@ the lambda function
 EOF
 }
 
+variable "lambda_role" {
+  default = ""
+  description  = <<EOF
+
+EOF
+}
+
 variable "lambda_schedule_expression" {
   default     = ""
   description = ""
 }
-
-variable "graphite_server" {}
 
 variable "lambda_function_policy" {
   default = ""
@@ -61,4 +64,33 @@ variable "lambda_iam_role" {
 
 variable "lambda_memory_size" {
   default = "128"
+}
+
+# Tag variables
+# Tagging variables
+
+variable "costcenter" {
+  description = "CostCenter tag (30119 - Thierry Bedos, 30166/30167 - Matt Fryer)"
+  type        = "string"
+}
+
+variable "dataclassification" {
+  description = "DataClassification tag (HighlySensitive, Sensitive, Confidential, Public)"
+  type        = "string"
+}
+
+variable "environment" {
+  description = "Environment tag (Secure, Prod, Corp, Lab, DataWarehouse)"
+  type        = "string"
+}
+
+variable "launchedby" {
+  description = "LaunchedBy tag (e.g. terraform-api)"
+  type        = "string"
+  default     = "terraform-api"
+}
+
+variable "team" {
+  description = "Team tag (HCOM_...)"
+  type        = "string"
 }

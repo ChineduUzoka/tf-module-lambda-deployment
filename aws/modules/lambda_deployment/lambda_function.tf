@@ -1,12 +1,21 @@
 # VPC lambda function
+module "hcom-tags" {
+  source = "git::ssh://stash.hcom:7999/AWSINFRA/hcom-terraform-module-tags.git"
+
+  costcenter         = "${var.costcenter}"
+  dataclassification = "${var.dataclassification}"
+  environment        = "${var.environment}"
+  launchedby         = "${var.launchedby}"
+  team               = "${var.team}"
+}
+
 resource "aws_lambda_function" "lambda_deploy_function_vpc" {
   count             = "${length(var.lambda_subnets) > 0 ? 1 : 0}"
-  s3_bucket         = "${aws_s3_bucket_object.lambda_deploy.bucket}"
-  s3_key            = "${aws_s3_bucket_object.lambda_deploy.key}"
+  filename          = "${data.archive_file.lambda_deploy.output_path}"
   function_name     = "${var.lambda_project_name}"
   handler           = "${var.lambda_project_name}.lambda_handler"
   description       = "${var.lambda_description}"
-  role              = "${aws_iam_role.iam_lambda_for_grafana.arn}"
+  role              = "${aws_iam_role.lambda_iam_role.arn}"
   source_code_hash  = "${data.archive_file.lambda_deploy.output_base64sha256}"
   runtime           = "${var.lambda_runtime}"
   timeout           = "${var.lambda_timeout}"
@@ -21,7 +30,15 @@ resource "aws_lambda_function" "lambda_deploy_function_vpc" {
     variables = "${var.lambda_envs}"
   }
 
-  depends_on = ["aws_s3_bucket_object.lambda_deploy"]
+  lifecycle {
+    ignore_changes = ["source_code_hash","last_modified"]
+  }
+
+  tags = "${merge(module.hcom-tags.tags,
+                 map("Name", "${var.lambda_project_name}"),
+                 map("Application", "Lambda"))
+         }"
+
 }
 
 resource "aws_lambda_alias" "lambda_deploy_alias_vpc" {
@@ -51,12 +68,11 @@ resource "aws_lambda_permission" "allow_cw_er_vpc" {
 # Non VPC lambda function
 resource "aws_lambda_function" "lambda_deploy_function" {
   count             = "${length(var.lambda_subnets) == 0 ? 1 : 0}"
-  s3_bucket         = "${aws_s3_bucket_object.lambda_deploy.bucket}"
-  s3_key            = "${aws_s3_bucket_object.lambda_deploy.key}"
+  filename          = "${data.archive_file.lambda_deploy.output_path}"
   function_name     = "${var.lambda_project_name}"
   handler           = "${var.lambda_project_name}.lambda_handler"
   description       = "${var.lambda_description}"
-  role              = "${aws_iam_role.iam_lambda_for_grafana.arn}"
+  role              = "${aws_iam_role.lambda_iam_role.arn}"
   source_code_hash  = "${data.archive_file.lambda_deploy.output_base64sha256}"
   runtime           = "${var.lambda_runtime}"
   timeout           = "${var.lambda_timeout}"
@@ -66,7 +82,11 @@ resource "aws_lambda_function" "lambda_deploy_function" {
     variables = "${var.lambda_envs}"
   }
 
-  depends_on = ["aws_s3_bucket_object.lambda_deploy"]
+  tags = "${merge(module.hcom-tags.tags,
+                 map("Name", "${var.lambda_project_name}"),
+                 map("Application", "Lambda"))
+         }"
+
 }
 
 resource "aws_lambda_alias" "lambda_deploy_alias" {

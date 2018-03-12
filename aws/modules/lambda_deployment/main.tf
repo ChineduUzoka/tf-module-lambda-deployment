@@ -25,7 +25,7 @@ resource "null_resource" "lambda_deployment" {
 [[ -e "${local.lambda_package_file}" ]] && \
 ( perl -p -i -e 's/pkg-resource.*\n//g' ${local.lambda_package_file}
 pip -q install -r "${local.lambda_package_file}" -t ${local.lambda_build_dir} )
-cp -r ${local.lambda_source_dir}/* ${local.lambda_build_dir}
+cp -r ${local.lambda_source_dir}/*.py ${local.lambda_build_dir}
 [[ -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip ]] && \
 rm -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip || true
 
@@ -51,17 +51,10 @@ data "archive_file" "lambda_deploy" {
   depends_on  = ["null_resource.lambda_deployment"]
 }
 
-resource "aws_s3_bucket_object" "lambda_deploy" {
-  bucket = "${var.lambda_bucket}"
-  key    = "${var.lambda_project_name}/${var.lambda_project_name}.zip"
-  source = "${data.archive_file.lambda_deploy.output_path}"
-  etag   = "${data.archive_file.lambda_deploy.output_md5}"
-}
-
 resource "aws_iam_policy" "lambda_function_policy" {
   count       = "${var.lambda_function_policy != "" ? 1 : 0}"
   name = "${var.lambda_project_name}"
-  description = "Lambda Grafana policy for ${var.lambda_project_name}"
+  description = "Lambda deployment policy for ${var.lambda_project_name}"
   policy      = "${var.lambda_function_policy}"
 }
 
@@ -72,7 +65,7 @@ data "aws_iam_role" "lambda_deploy" {
 resource "aws_iam_policy_attachment" "lambda_function_policy" {
   count      = "${var.lambda_function_policy != "" ? 1 : 0}"
   name       = "${var.lambda_project_name}-attachment"
-  roles      = ["${aws_iam_role.iam_lambda_for_grafana.id}"]
+  roles      = ["${aws_iam_role.lambda_iam_role.id}"]
   policy_arn = "${aws_iam_policy.lambda_function_policy.arn}"
 }
 
