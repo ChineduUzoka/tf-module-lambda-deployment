@@ -13,7 +13,7 @@ resource "aws_lambda_function" "lambda_deploy_function_vpc" {
   count             = "${length(var.lambda_subnets) > 0 ? 1 : 0}"
   filename          = "${data.archive_file.lambda_deploy.output_path}"
   function_name     = "${var.lambda_project_name}"
-  handler           = "${var.lambda_project_name}.lambda_handler"
+  handler           = "${var.lambda_handler_filename}.lambda_handler"
   description       = "${var.lambda_description}"
   role              = "${aws_iam_role.lambda_iam_role.arn}"
   source_code_hash  = "${data.archive_file.lambda_deploy.output_base64sha256}"

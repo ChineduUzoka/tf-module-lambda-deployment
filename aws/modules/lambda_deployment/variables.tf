@@ -66,6 +66,10 @@ variable "lambda_memory_size" {
   default = "128"
 }
 
+variable "lambda_handler_filename" {
+  description = "The name of the file that will execute the function - lambda_handler"
+  default = "main"
+}
 # Tag variables
 # Tagging variables
 
