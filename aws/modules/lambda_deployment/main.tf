@@ -25,10 +25,9 @@ resource "null_resource" "lambda_deployment" {
 [[ -e "${local.lambda_package_file}" ]] && \
 ( perl -p -i -e 's/pkg-resource.*\n//g' ${local.lambda_package_file}
 pip -q install -r "${local.lambda_package_file}" -t ${local.lambda_build_dir} )
-cp -r ${local.lambda_source_dir}/* ${local.lambda_build_dir}
+cd ${local.lambda_source_dir} && tar cf - . | (cd ${local.lambda_build_dir} && tar xf -)
 [[ -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip ]] && \
 rm -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip || true
-
 EOF
 
     interpreter = ["bash", "-c"]
