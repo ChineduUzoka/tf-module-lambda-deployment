@@ -4,7 +4,7 @@ locals {
   lambda_package_dir       = "${local.lambda_root_dir}/package"
   lambda_build_dir         = "${local.lambda_root_dir}/build"
   lambda_package_file      = "${local.lambda_source_dir}/requirements.txt"
-  lambda_handler_code_file = "${local.lambda_source_dir}/main.py"
+  lambda_handler_code_file = "${local.lambda_source_dir}/${var.lambda_handler_filename}.py"
 }
 
 locals {
@@ -22,9 +22,14 @@ resource "null_resource" "lambda_deployment" {
     command = <<EOF
 [[ ! -d "${local.lambda_package_dir}" ]] && mkdir -p ${local.lambda_package_dir}
 [[ ! -d "${local.lambda_build_dir}" ]] && mkdir -p ${local.lambda_build_dir}
-[[ -e "${local.lambda_package_file}" ]] && \
+
+if [[ -e "${local.lambda_package_dir}/deployment_package.zip" ]]; then
+unzip -q ${local.lambda_package_dir}/deployment_package.zip -d ${local.lambda_build_dir}
+elif [[ -e "${local.lambda_package_file}" ]]; then
 ( perl -p -i -e 's/pkg-resource.*\n//g' ${local.lambda_package_file}
 pip -q install -r "${local.lambda_package_file}" -t ${local.lambda_build_dir} )
+fi
+
 cd ${local.lambda_source_dir} && tar cf - . | (cd ${local.lambda_build_dir} && tar xf -)
 [[ -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip ]] && \
 rm -f ${local.lambda_package_dir}/${var.lambda_project_name}.zip || true

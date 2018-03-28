@@ -29,12 +29,11 @@ resource "aws_iam_policy" "lambda_iam_policy" {
 
 data "aws_iam_policy_document" "lambda_iam_document" {
   statement {
-    sid       = "lambdaDeploydDefault"
+    sid       = "lambdaCloudWatchDefault"
 
     effect    = "Allow"
 
     actions   = [
-      "lambda:InvokeFunction",
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -44,7 +43,7 @@ data "aws_iam_policy_document" "lambda_iam_document" {
     resources = [
       "*"
     ]
-  }
+  }    
 }
 
 resource "aws_iam_policy_attachment" "lambda_iam_attachment" {
