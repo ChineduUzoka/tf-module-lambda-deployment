@@ -70,31 +70,8 @@ variable "lambda_handler_filename" {
   description = "The name of the file that will execute the function - lambda_handler"
   default = "main"
 }
-# Tag variables
-# Tagging variables
 
-variable "costcenter" {
-  description = "CostCenter tag (30119 - Thierry Bedos, 30166/30167 - Matt Fryer)"
-  type        = "string"
-}
-
-variable "dataclassification" {
-  description = "DataClassification tag (HighlySensitive, Sensitive, Confidential, Public)"
-  type        = "string"
-}
-
-variable "environment" {
-  description = "Environment tag (Secure, Prod, Corp, Lab, DataWarehouse)"
-  type        = "string"
-}
-
-variable "launchedby" {
-  description = "LaunchedBy tag (e.g. terraform-api)"
-  type        = "string"
-  default     = "terraform-api"
-}
-
-variable "team" {
-  description = "Team tag (HCOM_...)"
-  type        = "string"
+variable "default-tags" {
+  default = {}
+  type = "map"
 }
