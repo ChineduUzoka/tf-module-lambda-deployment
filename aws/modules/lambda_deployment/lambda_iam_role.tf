@@ -1,6 +1,6 @@
 resource "aws_iam_role" "lambda_iam_role" {
-  name = "lambda-deployment-for-${var.lambda_project_name}"
-  description = "This is the default role assigned to a lambda deployment function from hcom-terraform-module-lambda-deployment"
+  name = "lambda_deployment_role_${local.lambda_project_name}"
+  description = "Lambda deployment role for ${local.lambda_project_name}"
 
   assume_role_policy = <<EOF
 {
@@ -20,8 +20,8 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda_iam_policy" {
-  name = "lambda-deployment-for-${var.lambda_project_name}"
-  description = "Default lambda policy for hcom-terraform-module-lambda-deployment"
+  name = "lambda_deployment_policy_${local.lambda_project_name}"
+  description = "Default lambda policy for ${local.lambda_project_name}"
 
   policy      = "${data.aws_iam_policy_document.lambda_iam_document.json}"
 
@@ -43,11 +43,11 @@ data "aws_iam_policy_document" "lambda_iam_document" {
     resources = [
       "*"
     ]
-  }    
+  }
 }
 
 resource "aws_iam_policy_attachment" "lambda_iam_attachment" {
-  name       = "lambda-deployment-att-for-${var.lambda_project_name}"
+  name       = "lambda_deployment_att_${local.lambda_project_name}"
   roles      = ["${aws_iam_role.lambda_iam_role.name}"]
   policy_arn = "${aws_iam_policy.lambda_iam_policy.arn}"
 }
