@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_iam_role" {
-  name = "lambda_deployment_role_${local.lambda_project_name}"
+  name        = "lambda_deployment_role_${local.lambda_project_name}"
   description = "Lambda deployment role for ${local.lambda_project_name}"
 
   assume_role_policy = <<EOF
@@ -20,28 +20,27 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda_iam_policy" {
-  name = "lambda_deployment_policy_${local.lambda_project_name}"
+  name        = "lambda_deployment_policy_${local.lambda_project_name}"
   description = "Default lambda policy for ${local.lambda_project_name}"
 
-  policy      = "${data.aws_iam_policy_document.lambda_iam_document.json}"
-
+  policy = "${data.aws_iam_policy_document.lambda_iam_document.json}"
 }
 
 data "aws_iam_policy_document" "lambda_iam_document" {
   statement {
-    sid       = "lambdaCloudWatchDefault"
+    sid = "lambdaCloudWatchDefault"
 
-    effect    = "Allow"
+    effect = "Allow"
 
-    actions   = [
+    actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:DescribeLogStreams"
+      "logs:DescribeLogStreams",
     ]
 
     resources = [
-      "*"
+      "*",
     ]
   }
 }
