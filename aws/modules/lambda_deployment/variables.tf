@@ -32,7 +32,8 @@ EOF
 
 variable "lambda_role" {
   default = ""
-  description  = <<EOF
+
+  description = <<EOF
 
 EOF
 }
@@ -68,10 +69,10 @@ variable "lambda_memory_size" {
 
 variable "lambda_handler_filename" {
   description = "The name of the file that will execute the function - lambda_handler"
-  default = "main"
+  default     = "main"
 }
 
 variable "default-tags" {
   default = {}
-  type = "map"
+  type    = "map"
 }

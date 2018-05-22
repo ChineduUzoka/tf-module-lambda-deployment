@@ -16,6 +16,7 @@ locals {
     subnet_ids         = ["${var.lambda_subnets}"]
     security_group_ids = ["${var.lambda_security_groups}"]
   }
+
   default_tags = {}
 }
 
@@ -73,12 +74,13 @@ data "archive_file" "lambda_deploy" {
   type        = "zip"
   source_dir  = "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}/"
   output_path = "${local.archive_zip_file}"
+
   # depends_on  = ["null_resource.lambda_deployment"]
 }
 
 resource "aws_iam_policy" "lambda_function_policy" {
   count       = "${var.lambda_function_policy != "" ? 1 : 0}"
-  name = "${local.lambda_project_name}"
+  name        = "${local.lambda_project_name}"
   description = "Lambda deployment policy for ${local.lambda_project_name}"
   policy      = "${var.lambda_function_policy}"
 }
