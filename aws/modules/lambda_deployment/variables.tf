@@ -59,10 +59,6 @@ variable "lambda_security_groups" {
   default = []
 }
 
-variable "lambda_iam_role" {
-  default = ""
-}
-
 variable "lambda_memory_size" {
   default = "128"
 }

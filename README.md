@@ -65,7 +65,6 @@ module "great_lambda_function" {
    lambda_project_name     = "great_lambda_function"
    lambda_description      = "This function is Greate Lambda Function and does amazing things"
    lambda_handler_filename = "great_lambda_function"
-   lambda_handler_filename = "great_lambda_function"
    lambda_function_policy  = "${data.aws_iam_policy_document.lambda.json}"
    lambda_security_groups  = ["wonderfully_secure_security_group"]
    lambda_memory_size      = 512
